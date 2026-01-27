@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+::-webkit-scrollbar{
+    display: none;
+}
+.blog-content h2 {
+  @apply font-serif text-3xl mt-12 mb-6 text-white;
+}
+
+.blog-content p {
+  @apply leading-relaxed mb-6 text-slate-400;
+}
+
+.blog-content blockquote {
+  @apply my-10 p-6 rounded-r-3xl border-l-4 border-lime-400 bg-lime-400/5;
+}
+
+.blog-content blockquote p {
+  @apply italic font-medium text-lg m-0 text-lime-400;
+}
+.blog-content {
+  @apply text-slate-400;
+}
