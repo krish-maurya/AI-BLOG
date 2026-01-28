@@ -14,9 +14,34 @@ datasource db {
 }
 
 // Define your database schema here
-model user {
-  id        Int      @id @default(autoincrement())
+model User {
+  id        String   @id @default(uuid())
   email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Blog {
+  id          String    @id @default(uuid())
+  title       String
+  subTitle    String
+  description String
+  category    String
+  image       String
+  author      String
+  isPublished Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  comments    Comment[] // One-to-many relation
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  blog      Blog     @relation(fields: [blogId], references: [id])
+  blogId    String
+  name      String
+  content   String
+  isApproved Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
