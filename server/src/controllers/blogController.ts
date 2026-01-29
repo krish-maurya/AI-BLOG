@@ -18,7 +18,7 @@ interface BuildUrlOptions {
 export const addBlog = async (req: Request, res: Response) => {
     try {
         const { title, subtitle, description, category, author, ispublished } = JSON.parse(req.body.blog);
-        const imageFile = ( req as any ).file;
+        const imageFile = (req as any).file;
 
         // all field validation
         if (!title || !subtitle || !description || !category || !author) {
@@ -59,11 +59,11 @@ export const addBlog = async (req: Request, res: Response) => {
                 category,
                 author,
                 image,
-                isPublished : ispublished,
+                isPublished: ispublished,
             }
         })
 
-        res.json({ success: true, message: "Blog added successfully" });
+        res.json({ success: true, message: "Blog added successfully", blog: { title, subtitle, description, category, author, image, isPublished: ispublished } });
 
     } catch (error) {
         if (error instanceof Error) {
@@ -73,3 +73,87 @@ export const addBlog = async (req: Request, res: Response) => {
         }
     }
 };
+
+export const getAllBlogs = async (req: Request, res: Response) => {
+    try {
+
+        const blogs = await prisma.blog.findMany({
+            where: {
+                isPublished: true
+            }
+        })
+
+        if(!blogs){
+            res.json({ success: false, message: "no blogs" });
+        }
+
+        res.json({ success: true, blogs });
+    } catch (error) {
+        if (error instanceof Error) {
+            res.json({ success: false, message: error.message });
+        } else {
+            res.json({ success: false, message: "Something went wrong" });
+        }
+    }
+}
+
+export const getBlogById = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        if (!id || Array.isArray(id)) {
+            return res.json({ success: false, message: "Valid blog id is required" });
+        }
+        const blog = await prisma.blog.findUnique({
+            where: { id }
+        })
+
+        if (!blog) {
+            return res.json({ success: false, message: "Blog not found" });
+        }
+
+        res.json({ success: true, blog });
+    } catch (error) {
+        if (error instanceof Error) {
+            res.json({ success: false, message: error.message });
+        } else {
+            res.json({ success: false, message: "Something went wrong" });
+        }
+    }
+}
+
+export const deleteBlogById = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.body;
+        await prisma.blog.delete({
+            where: {id}
+        })
+        res.json({ success: true, message:"Blog deleted successfully" });
+    } catch (error) {
+        if (error instanceof Error) {
+            res.json({ success: false, message: error.message });
+        } else {
+            res.json({ success: false, message: "Something went wrong" });
+        }
+    }
+}
+
+
+export const togglePublished = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.body;
+        const Blog = await prisma.blog.findUnique({
+            where: {id} 
+        })
+        if (!Blog) {
+            return res.json({ success: false, message: "Blog not found" });
+        }
+        Blog.isPublished=!Blog.isPublished;
+        res.json({ success: true, message:"Blog status updated successfully" });
+    } catch (error) {
+        if (error instanceof Error) {
+            res.json({ success: false, message: error.message });
+        } else {
+            res.json({ success: false, message: "Something went wrong" });
+        }
+    }
+}
