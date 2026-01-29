@@ -1,8 +1,12 @@
 import { ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Blogpage from './Blogpage';
+import { useAppContext } from '../../context/appContext';
 
 export default function App() {
+
+  const { navigate , token}=useAppContext();
+
   // Initialize state from localStorage or default to 'home'
   const [currentPage, setCurrentPage] = useState(() => {
     const savedPage = localStorage.getItem('currentPage');
@@ -36,11 +40,11 @@ export default function App() {
         <div className="relative z-10 min-h-screen flex flex-col">
           {/* Header */}
           <header className="flex justify-between items-center px-8 md:px-16 py-6">
-            <h1 className="text-white text-[20px] font-semibold">
+            <h1 className="text-white text-[20px] font-semibold cursor-pointer">
               Inspire.
             </h1>
-            <button className="text-white border-2 border-white px-6 py-1 rounded-full hover:bg-[#F2F1CD] hover:text-green-900 transition-all duration-300 text-sm md:text-base font-medium">
-              Log In
+            <button onClick={()=>navigate('/login')} className="text-white border-2 border-white px-6 py-1 rounded-full hover:bg-[#F2F1CD] hover:text-green-900 transition-all duration-300 text-sm md:text-base font-medium">
+              {token ?"Dashboard": "Log In"}
             </button>
           </header>
 

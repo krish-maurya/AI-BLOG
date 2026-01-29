@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express"
+import { prisma } from "../lib/prisma.js";
 
 export const adminLogin = async (req: Request, res: Response) => {
     try {
@@ -16,6 +17,110 @@ export const adminLogin = async (req: Request, res: Response) => {
 
         res.json({ success: true, token });
 
+    } catch (error) {
+        if (error instanceof Error) {
+            res.json({ success: false, message: error.message });
+        } else {
+            res.json({ success: false, message: "Something went wrong" });
+        }
+    }
+}
+
+export const getAllBlogsAdmin = async (req: Request, res: Response) => {
+    try {
+        const blogs = await prisma.blog.findMany({
+            orderBy: {
+                createdAt: "desc"
+            }
+        })
+        res.json({ success: true, blogs });
+
+    } catch (error) {
+        if (error instanceof Error) {
+            res.json({ success: false, message: error.message });
+        } else {
+            res.json({ success: false, message: "Something went wrong" });
+        }
+    }
+}
+
+
+export const getAllCommentsAdmin = async (req: Request, res: Response) => {
+    try {
+        const comments = await prisma.comment.findMany({
+            orderBy: {
+                createdAt: "desc"
+            },
+            include: {
+                blog: true, // Include related blog data
+            },
+        })
+        res.json({ success: true, comments });
+
+    } catch (error) {
+        if (error instanceof Error) {
+            res.json({ success: false, message: error.message });
+        } else {
+            res.json({ success: false, message: "Something went wrong" });
+        }
+    }
+}
+
+export const getDashboardData = async (req: Request, res: Response) => {
+    try {
+        const recentBlogs = await prisma.blog.findMany({
+            orderBy: {
+                createdAt: "desc"
+            },
+            take: 5,// Get the 5 most recent blogs
+        });
+        const blogs = await prisma.blog.count();
+        const comments = await prisma.comment.count();
+        const draft= await prisma.blog.count({
+            where:{isPublished:false}
+        });
+
+        const dashboardData  = {
+            recentBlogs,
+            blogs,
+            comments,
+            draft
+        }
+        res.json({ success: true, dashboardData });
+    } catch (error) {
+         if (error instanceof Error) {
+            res.json({ success: false, message: error.message });
+        } else {
+            res.json({ success: false, message: "Something went wrong" });
+        }
+    }
+}
+
+export const deleteCommentById = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.body;
+        await prisma.comment.delete({
+            where: { id }
+        });
+        res.json({ success: true, message: "Comment deleted successfully" });
+    } catch (error) {
+        if (error instanceof Error) {
+            res.json({ success: false, message: error.message });
+        } else {
+            res.json({ success: false, message: "Something went wrong" });
+        }
+    }
+}
+
+
+export const approveCommentById = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.body;
+        await prisma.comment.update({
+            where: { id },
+            data: { isApproved: true }
+        });
+        res.json({ success: true, message: "Comment approved successfully" });
     } catch (error) {
         if (error instanceof Error) {
             res.json({ success: false, message: error.message });

@@ -1,34 +1,14 @@
 import { Mail, Lock, Eye, EyeOff, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { useAppContext } from '../../context/appContext';
-import toast from 'react-hot-toast';
 
-export default function Login() {
-
-  const { axios, setToken } = useAppContext();
-
+export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const { data } = await axios.post('/api/admin/login', { email, password })
-
-      if (data.success) {
-        setToken(data.token)
-        localStorage.setItem('token', data.token);
-        axios.defaults.headers.common['Authorization'] = data.token;
-      }else{
-        toast.error(data.message)
-      }
-
-    } catch (error) {
-      if(error instanceof Error){
-        toast.error(error.message)
-      }
-    }
+    console.log('Login submitted:', { email, password });
   };
 
   return (
@@ -43,9 +23,9 @@ export default function Login() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6">
-            <span className="text-xs font-semibold text-white uppercase tracking-widest">Admin Portal</span>
+            <span className="text-xs font-semibold text-white uppercase tracking-widest">Dashboard</span>
           </div>
-
+          
           <h1 className="font-serif text-5xl text-white mb-3 italic">
             inspier
           </h1>
@@ -100,16 +80,7 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between">
-              <button
-                type="button"
-                className="text-lime-400 text-sm font-medium hover:text-lime-300 transition-colors"
-              >
-                Forgot password?
-              </button>
-            </div>
-
+           
             {/* Submit Button */}
             <button
               type="submit"

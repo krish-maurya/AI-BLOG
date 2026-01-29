@@ -63,7 +63,7 @@ export const addBlog = async (req: Request, res: Response) => {
             }
         })
 
-        res.json({ success: true, message: "Blog added successfully", blog: { title, subtitle, description, category, author, image, isPublished: ispublished } });
+        res.json({ success: true, message: "Blog added successfully" });
 
     } catch (error) {
         if (error instanceof Error) {
@@ -83,7 +83,7 @@ export const getAllBlogs = async (req: Request, res: Response) => {
             }
         })
 
-        if(!blogs){
+        if (!blogs) {
             res.json({ success: false, message: "no blogs" });
         }
 
@@ -125,9 +125,15 @@ export const deleteBlogById = async (req: Request, res: Response) => {
     try {
         const { id } = req.body;
         await prisma.blog.delete({
-            where: {id}
+            where: { id }
         })
-        res.json({ success: true, message:"Blog deleted successfully" });
+
+        //delete related comments
+        await prisma.comment.deleteMany({
+            where: { blogId: id }
+        })
+
+        res.json({ success: true, message: "Blog deleted successfully" });
     } catch (error) {
         if (error instanceof Error) {
             res.json({ success: false, message: error.message });
@@ -142,13 +148,58 @@ export const togglePublished = async (req: Request, res: Response) => {
     try {
         const { id } = req.body;
         const Blog = await prisma.blog.findUnique({
-            where: {id} 
+            where: { id }
         })
         if (!Blog) {
             return res.json({ success: false, message: "Blog not found" });
         }
-        Blog.isPublished=!Blog.isPublished;
-        res.json({ success: true, message:"Blog status updated successfully" });
+        Blog.isPublished = !Blog.isPublished;
+        res.json({ success: true, message: "Blog status updated successfully" });
+    } catch (error) {
+        if (error instanceof Error) {
+            res.json({ success: false, message: error.message });
+        } else {
+            res.json({ success: false, message: "Something went wrong" });
+        }
+    }
+}
+
+export const addComment = async (req: Request, res: Response) => {
+    try {
+        const { blogId, name, content } = req.body;
+        await prisma.comment.create({
+            data: {
+                blog: {
+                    connect: { id: blogId }, //  relation connect
+                },
+                name,
+                content
+            }
+        })
+        res.json({ success: true, message: "Comment added for review" });
+    } catch (error) {
+        if (error instanceof Error) {
+            res.json({ success: false, message: error.message });
+        } else {
+            res.json({ success: false, message: "Something went wrong" });
+        }
+    }
+}
+
+
+export const getBlogComment = async (req: Request, res: Response) => {
+    try {
+        const { blogId } = req.body;
+        if (!blogId) {
+            return res.json({ success: false, message: "Valid blog id is required" });
+        }
+        const comment = await prisma.comment.findMany({
+            where: { blogId: blogId, isApproved: true },
+            orderBy: {
+                createdAt: "desc",
+            },
+        })
+        res.json({ success: true, comment });
     } catch (error) {
         if (error instanceof Error) {
             res.json({ success: false, message: error.message });

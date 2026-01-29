@@ -1,8 +1,11 @@
 import { Sparkles } from 'lucide-react';
 import React, { use, useEffect, useRef, useState } from 'react';
 import Quill from 'quill';
+import { useAppContext } from '../../../context/appContext';
 
 export default function AddBlog() {
+  const { axios } =useAppContext();
+  const [isadding, setIsadding] = useState(false)
   const editorRef = useRef(null);
   const quillRef = useRef<Quill | null>(null);
   const [image, setimage] = useState<File | boolean>(false);
@@ -28,8 +31,8 @@ export default function AddBlog() {
 
   useEffect(() => {
     // Initialize Quill editor only once
-    if(!quillRef.current && editorRef.current){
-       quillRef.current = new Quill(editorRef.current,{theme:'snow'});
+    if (!quillRef.current && editorRef.current) {
+      quillRef.current = new Quill(editorRef.current, { theme: 'snow' });
     }
 
   }, []);
@@ -50,7 +53,7 @@ export default function AddBlog() {
                 placeholder="Enter an engaging blog title..."
                 className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all"
                 required
-                onChange={(e)=>settittle(e.target.value)}
+                onChange={(e) => settittle(e.target.value)}
                 value={tittle}
               />
             </div>
@@ -65,7 +68,7 @@ export default function AddBlog() {
                 placeholder="Add a compelling subtitle"
                 className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all"
                 required
-                onChange={(e)=>setsubtittle(e.target.value)}
+                onChange={(e) => setsubtittle(e.target.value)}
                 value={subtittle}
               />
             </div>
@@ -136,7 +139,7 @@ export default function AddBlog() {
               <label className="block text-slate-300 text-sm font-medium mb-2">
                 Blog Category <span className="text-red-400">*</span>
               </label>
-              <select onChange={(e)=>setcategory(e.target.value)} className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all" required>
+              <select onChange={(e) => setcategory(e.target.value)} className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all" required>
                 <option value="">Select a category</option>
                 <option value="technology">Technology</option>
                 <option value="lifestyle">Lifestyle</option>
@@ -150,39 +153,39 @@ export default function AddBlog() {
             </div>
 
             {/* Content Editor with AI Button */}
-           <div>
-  <label className="block text-slate-300 text-sm font-medium mb-2">
-    Blog Content <span className="text-red-400">*</span>
-  </label>
-  
-  {/* Text Editor Toolbar */}
-  <div className="bg-slate-800/50 border border-slate-700 rounded-t-xl p-3 flex items-center gap-2 flex-wrap">
-    {/* Your toolbar buttons (Bold, Italic, Underline, Link, Lists, etc.) */}
-  </div>
-  
-  {/* Styled Editor Div with AI Button Inside */}
-  <div className="relative">
-    <div 
-      ref={editorRef}
-      contentEditable
-      className="w-full min-h-[360px] px-4 py-3 pb-16 bg-slate-800/50 border border-slate-700 border-t-0 rounded-b-xl text-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all overflow-y-auto empty:before:content-[attr(data-placeholder)] empty:before:text-slate-500"
-      data-placeholder="Write your blog content here... Use the toolbar above for formatting or click 'Generate with AI' to create content automatically."
-      style={{
-        caretColor: 'white'
-      }}
-    />
-    
-    {/* AI Generation Button - Bottom Right */}
-    <button 
-      onClick={generatewithai} 
-      type="button"
-      className="absolute bottom-3 right-3 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-lime-400 to-emerald-400 text-emerald-950 rounded-lg font-semibold text-sm hover:from-lime-500 hover:to-emerald-500 transition-all shadow-lg shadow-lime-400/20 whitespace-nowrap"
-    >
-      <Sparkles className="w-4 h-4" />
-      Generate with AI
-    </button>
-  </div>
-</div>
+            <div>
+              <label className="block text-slate-300 text-sm font-medium mb-2">
+                Blog Content <span className="text-red-400">*</span>
+              </label>
+
+              {/* Text Editor Toolbar */}
+              <div className="bg-slate-800/50 border border-slate-700 rounded-t-xl p-3 flex items-center gap-2 flex-wrap">
+                {/* Your toolbar buttons (Bold, Italic, Underline, Link, Lists, etc.) */}
+              </div>
+
+              {/* Styled Editor Div with AI Button Inside */}
+              <div className="relative">
+                <div
+                  ref={editorRef}
+                  contentEditable
+                  className="w-full min-h-[360px] px-4 py-3 pb-16 bg-slate-800/50 border border-slate-700 border-t-0 rounded-b-xl text-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all overflow-y-auto empty:before:content-[attr(data-placeholder)] empty:before:text-slate-500"
+                  data-placeholder="Write your blog content here... Use the toolbar above for formatting or click 'Generate with AI' to create content automatically."
+                  style={{
+                    caretColor: 'white'
+                  }}
+                />
+
+                {/* AI Generation Button - Bottom Right */}
+                <button
+                  onClick={generatewithai}
+                  type="button"
+                  className="absolute bottom-3 right-3 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-lime-400 to-emerald-400 text-emerald-950 rounded-lg font-semibold text-sm hover:from-lime-500 hover:to-emerald-500 transition-all shadow-lg shadow-lime-400/20 whitespace-nowrap"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Generate with AI
+                </button>
+              </div>
+            </div>
 
             {/* Publish Now Checkbox */}
             <div className="bg-slate-800/30 border border-slate-700 rounded-xl p-4">
@@ -206,8 +209,8 @@ export default function AddBlog() {
 
             {/* Action Buttons */}
             <div className="flex items-center gap-3 pt-4">
-              <button type='submit' className="px-8 py-3 bg-lime-400 text-emerald-950 font-bold rounded-xl hover:bg-lime-500 active:scale-95 transition-all shadow-lg shadow-lime-400/20">
-                Add Blog
+              <button disabled={isadding} type='submit' className="px-8 py-3 bg-lime-400 text-emerald-950 font-bold rounded-xl hover:bg-lime-500 active:scale-95 transition-all shadow-lg shadow-lime-400/20">
+                {isadding ? "Adding ...":"Add Blog"}
               </button>
 
             </div>

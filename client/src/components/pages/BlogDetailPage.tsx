@@ -3,36 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { blog_data, comments_data } from '../../assets/data';
 import Loder from '../Loder';
-
-interface Blog {
-  _id: string;
-  title: string;
-  subTitle: string;
-  description: string;
-  category: string;
-  image: string;
-  isPublished: boolean;
-  author: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
-
-export interface Comment {
-  _id: string;
-  blog: Blog;
-  name: string;
-  content: string;
-  isApproved: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-
+import type { Blog, Comment } from '../../types';
+import { useAppContext } from '../../context/appContext';
+import toast from 'react-hot-toast';
 
 
 export default function BlogDetailPage() {
   const { id } = useParams();
+  const { axios } = useAppContext();
   const [data, setData] = useState<Blog | null | undefined>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [name, setname] = useState('');
@@ -41,17 +19,45 @@ export default function BlogDetailPage() {
 
   const commentRef = useRef<HTMLTextAreaElement>(null);
 
+
   const fetchBlogData = async () => {
-    const data = blog_data.find(item => item._id === id);
-    setData(data);
+    try {
+      const { data } = await axios.get(`/api/blog/${id}`)
+      data.success ? setData(data.blog) : toast.error(data.message);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      }
+    }
   };
 
   const fetchComments = async () => {
-    setComments(comments_data);
+    try {
+      const { data } = await axios.post(`/api/blog/getCommnet`, { blogId: id })
+      data.success ? setComments(data.comment) : toast.error(data.message);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      }
+    }
   };
 
   const addComment = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    try {
+      const { data } = await axios.post('/api/blog/addComment', { blogId: id, name, content })
+      if (data.success) {
+        toast.success(data.message)
+        setname('')
+        setcontent('')
+      } else {
+        toast.error(data.message)
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      }
+    }
   }
 
 
@@ -63,7 +69,7 @@ export default function BlogDetailPage() {
     <div className="min-h-screen bg-slate-950 transition-colors duration-300">
       {/* Fixed Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center bg-black/10 backdrop-blur-lg border-b border-white/10">
-        <button onClick={()=>navigate(-1)} className="p-2 bg-slate-800 rounded-full shadow-sm text-lime-400">
+        <button onClick={() => navigate(-1)} className="p-2 bg-slate-800 rounded-full shadow-sm text-lime-400">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div className="flex items-center gap-2">
@@ -169,7 +175,7 @@ export default function BlogDetailPage() {
           <div className="space-y-6 max-w-2xl mx-auto">
             {comments.map((comment) => (
               <div
-                key={comment._id}
+                key={comment.id}
                 className="bg-slate-900/40 border border-slate-800 rounded-2xl p-5"
               >
                 <div className="flex items-center gap-3 mb-2">
@@ -219,5 +225,5 @@ export default function BlogDetailPage() {
         </div>
       </main>
     </div>
-  ) : <Loder/>;
+  ) : <Loder />;
 }

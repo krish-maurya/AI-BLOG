@@ -4,22 +4,32 @@ import { blog_data } from '../../assets/data.ts';
 import { Pagination } from './Pagination.tsx';
 import Blogcard from '../Blogcard.tsx';
 import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '../../context/appContext.tsx';
+import type { Blog } from '../../types/index.ts';
 
 interface BlogpageProps {
   setCurrentPage?: (page: string) => void;
 }
 
 export default function Blogpage({ setCurrentPage }: BlogpageProps) {
-  const navigate = useNavigate();
+  const {blogs,navigate }=useAppContext();
+
 
   const [menu, setMenu] = useState('All');
   const [currentPageBlog, setCurrentPageBlog] = useState(1);
   const [cardperPage] = useState(8);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const filterBlogs = ()=>{
+    if(searchQuery===''){
+      return blogs
+    }
+    return blogs.filter((blog : Blog)=>blog.title.toLowerCase().includes(searchQuery.toLowerCase()) || blog.category.toLocaleLowerCase().includes(searchQuery.toLowerCase()));
+  }
+
   const lastCardIndex = currentPageBlog * cardperPage;
   const firstCardIndex = lastCardIndex - cardperPage;
-  const currentCards = blog_data.slice(firstCardIndex, lastCardIndex);
+  const currentCards = filterBlogs().slice(firstCardIndex, lastCardIndex);
 
   const blogCategories = ['All', 'Technology', 'Lifestyle', 'Business', 'Travel', 'Food'];
 
@@ -27,8 +37,8 @@ export default function Blogpage({ setCurrentPage }: BlogpageProps) {
     setCurrentPage?.('home');
   };
 
-  const handleBlogClick = (_id: string) => {
-    navigate(`/blog/${_id}`);
+  const handleBlogClick = (id: string) => {
+    navigate(`/blog/${id}`);
   };
 
   return (
@@ -87,17 +97,17 @@ export default function Blogpage({ setCurrentPage }: BlogpageProps) {
       {/* Blog Grid */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         {currentCards
-          .filter((blog) =>
+          .filter((blog:Blog) =>
             menu === 'All' ? true : blog.category === menu
           )
-          .filter((blog) =>
+          .filter((blog:Blog) =>
             blog.title.toLowerCase().includes(searchQuery.toLowerCase())
           )
-          .map((blog) => (
+          .map((blog:Blog) => (
             <Blogcard
-              key={blog._id}
+              key={blog.id}
               blog={blog}
-              onClick={() => handleBlogClick(blog._id)}
+              onClick={() => handleBlogClick(blog.id)}
             />
           ))}
       </div>

@@ -32,7 +32,7 @@ export default function Listblogs() {
           <tbody>
             {blog.map((blog, index) => (
               <tr
-                key={blog._id}
+                key={blog.id}
                 className="border-b border-slate-800 hover:bg-slate-800/50 transition-colors"
               >
                 <td className="px-6 py-4 text-slate-400 text-sm">{index + 1}</td>

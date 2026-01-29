@@ -1,7 +1,8 @@
 import { ThumbsUp, Bookmark } from 'lucide-react';
+import type { Blog } from '../types';
 
 interface BlogCardProps {
-  blog: any;
+  blog: Blog;
   onClick: () => void;
 }
 

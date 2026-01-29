@@ -3,7 +3,7 @@
  */
 
 export interface Blog {
-  _id: string;
+  id: string;
   title: string;
   subTitle: string;
   description: string;
@@ -17,7 +17,7 @@ export interface Blog {
 }
 
 export interface Comment {
-  _id: string;
+  id: string;
   blog: Blog;
   name: string;
   content: string;
