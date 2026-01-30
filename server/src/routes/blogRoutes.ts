@@ -12,7 +12,7 @@ blogRouter.post('/delete', auth, deleteBlogById);
 blogRouter.post('/toggle-published', auth, togglePublished);
 blogRouter.post('/addComment', addComment);
 blogRouter.post('/getCommnet', getBlogComment);
-blogRouter.post('/generate', auth, generateContent);
+blogRouter.post('/generate', generateContent);
 
 
 export default blogRouter;
