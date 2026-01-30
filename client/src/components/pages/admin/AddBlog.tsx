@@ -22,22 +22,19 @@ export default function AddBlog() {
     if (!title) return toast.error("Please Enter the title");
     try {
       setIsLoading(true);
+      const baseURL = (import.meta as any).env.VITE_BASE_URL;
       
-      // Clone the default headers but remove Authorization
-      const headers = { ...axios.defaults.headers.common };
-      delete headers['Authorization'];
-
-      console.log(headers)
+      const response = await fetch(`${baseURL}/api/blog/generate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // NO Authorization header at all
+        },
+        body: JSON.stringify({ prompt: title })
+      });
       
-      const { data } = await axios.post("/api/blog/generate", 
-        { prompt: title },
-        { 
-          headers: {
-            ...headers,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      const data = await response.json();
+      console.log(data)
       
       if (data.success) {
         if (data.content && quillRef.current) {
