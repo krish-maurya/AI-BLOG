@@ -97,3 +97,9 @@
 .ql-picker-item:hover {
   color: rgb(163, 230, 53) !important;
 }
+
+.some-specific-class {
+  pointer-events: none;
+  user-select: none;
+  touch-action: none;
+}

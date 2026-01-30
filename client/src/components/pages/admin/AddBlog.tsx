@@ -21,14 +21,24 @@ export default function AddBlog() {
   const generatewithai = async () => {
     if (!title) return toast.error("Please Enter the title");
     try {
-      setIsLoading(true)
-      // Create a new axios instance without interceptors
-      const publicAxios = axios.create({
-        baseURL: axios.defaults.baseURL
-      });
+      setIsLoading(true);
+      
+      // Clone the default headers but remove Authorization
+      const headers = { ...axios.defaults.headers.common };
+      delete headers['Authorization'];
 
-      const { data } = await publicAxios.post("/api/blog/generate", { prompt: title });
-
+      console.log(headers)
+      
+      const { data } = await axios.post("/api/blog/generate", 
+        { prompt: title },
+        { 
+          headers: {
+            ...headers,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
       if (data.success) {
         if (data.content && quillRef.current) {
           const parsedContent = await parse(data.content);
@@ -42,7 +52,7 @@ export default function AddBlog() {
         toast.error(error.message);
       }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 

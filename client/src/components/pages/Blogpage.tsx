@@ -46,13 +46,10 @@ export default function Blogpage({ setCurrentPage }: BlogpageProps) {
       <div className="max-w-7xl mx-auto mb-10">
         <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
           <button
-            onClick={handleBackClick}
-            className="flex items-center gap-2 text-slate-300 hover:text-lime-400 transition"
-          >
-            <div>
-              <ArrowLeft size={18} />
-              <span className="text-sm font-semibold tracking-widest uppercase">Back</span>
-            </div>
+            onClick={() => handleBackClick()}
+            className="flex some-specific-classitems-center gap-2 text-slate-300 hover:text-lime-400 transition"
+          ><ArrowLeft size={18} />
+            <span className="text-sm font-semibold tracking-widest uppercase">Back</span>
           </button>
 
           {/* Search */}
@@ -76,7 +73,7 @@ export default function Blogpage({ setCurrentPage }: BlogpageProps) {
         </div>
 
         {/* Categories */}
-        <div className="flex gap-3 mt-8 overflow-x-auto justify-center">
+        <div className="flex gap-3 some-specific-class mt-8 overflow-x-auto justify-center">
           {blogCategories.map((category) => (
             <button
               key={category}
