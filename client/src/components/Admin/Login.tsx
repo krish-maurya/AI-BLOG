@@ -1,7 +1,7 @@
-import { Mail, Lock, Eye, EyeOff, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useState } from 'react';
-import { useAppContext } from '../../context/appContext';
 import toast from 'react-hot-toast';
+import { useAppContext } from '../../context/appContext';
 
 export default function Login() {
 
@@ -36,7 +36,7 @@ export default function Login() {
       {/* Decorative Background Blurs */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-lime-400/10 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-900/20 rounded-full blur-3xl"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-950/30 rounded-full blur-3xl"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-emerald-950/30 rounded-full blur-3xl"></div>
 
       {/* Login Card */}
       <div className="relative z-10 w-full max-w-md">

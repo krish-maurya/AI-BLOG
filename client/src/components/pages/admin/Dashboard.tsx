@@ -1,9 +1,8 @@
-import { FileText, X } from 'lucide-react';
+import { Book, MessageSquareText, PencilLine } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Book, MessageSquareText, PencilLine } from 'lucide-react'
-import type { Blog } from '../../../types';
-import { useAppContext } from '../../../context/appContext';
 import toast from 'react-hot-toast';
+import { useAppContext } from '../../../context/appContext';
+import type { Blog } from '../../../types';
 import Listblogs from './Listblogs';
 
 

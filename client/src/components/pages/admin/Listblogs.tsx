@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react'
 import { X } from 'lucide-react';
-import type { Blog } from '../../../types';
-import { blog_data } from '../../../assets/data';
-import { useAppContext } from '../../../context/appContext';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useAppContext } from '../../../context/appContext';
+import type { Blog } from '../../../types';
 
 export default function Listblogs() {
   const [blog, setblog] = useState<Blog[]>([])
