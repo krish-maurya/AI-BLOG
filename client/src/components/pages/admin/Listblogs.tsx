@@ -2,12 +2,60 @@ import React, { useEffect, useState } from 'react'
 import { X } from 'lucide-react';
 import type { Blog } from '../../../types';
 import { blog_data } from '../../../assets/data';
+import { useAppContext } from '../../../context/appContext';
+import toast from 'react-hot-toast';
 
 export default function Listblogs() {
   const [blog, setblog] = useState<Blog[]>([])
+  const { axios } = useAppContext();
 
   const fetchBlogs = async () => {
-    setblog(blog_data);
+    try {
+      const { data } = await axios.get("/api/admin/blogs")
+      if (data.success) {
+        setblog(data.blogs)
+      } else {
+        toast.error(data.message)
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      }
+    }
+  }
+
+  const deleteBlog = async (blog: Blog) => {
+    const confirm = window.confirm("Are you sure you want to delete this blog")
+    if (!confirm) return;
+    try {
+      const { data } = await axios.post("/api/blog/delete", { id: blog.id })
+      if (data.success) {
+        toast.success(data.message)
+        await fetchBlogs();
+      } else {
+        toast.error(data.message)
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      }
+    }
+  }
+
+  const toggelPublished = async (blog: Blog) => {
+    try {
+      const { data } = await axios.post("/api/blog/toggle-published", { id: blog.id })
+      if (data.success) {
+        toast.success(data.message)
+        await fetchBlogs();
+      } else {
+        toast.error(data.message)
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message)
+      }
+    }
   }
 
   useEffect(() => {
@@ -48,10 +96,10 @@ export default function Listblogs() {
                   </span>
                 </td>
                 <td className="px-6 py-4 flex items-center gap-2">
-                  <button className="px-4 py-1.5 mr-6 text-xs font-medium text-slate-400 border border-slate-700 rounded-lg hover:bg-slate-800 hover:text-white transition-all">
+                  <button onClick={ ()=>toggelPublished(blog)} className="px-4 py-1.5 text-xs font-medium text-slate-400 border border-slate-700 rounded-lg hover:bg-slate-800 hover:text-white transition-all">
                     {blog.isPublished ? "Unpublish" : "Publish"}
                   </button>
-                  <button className="p-1.5 text-red-400 hover:bg-red-500/10 border border-red-500/20 rounded-lg hover:text-red-300 transition-all">
+                  <button onClick={() => deleteBlog(blog)} className="ml-auto p-1.5 text-red-400 hover:bg-red-500/10 border border-red-500/20 rounded-lg hover:text-red-300 transition-all">
                     <X className="w-4 h-4" />
                   </button>
                 </td>

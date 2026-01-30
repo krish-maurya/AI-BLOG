@@ -1,25 +1,81 @@
 import { Sparkles } from 'lucide-react';
-import React, { use, useEffect, useRef, useState } from 'react';
+import { parse } from 'marked';
 import Quill from 'quill';
+import React, { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useAppContext } from '../../../context/appContext';
 
 export default function AddBlog() {
-  const { axios } =useAppContext();
+  const { axios } = useAppContext();
   const [isadding, setIsadding] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const editorRef = useRef(null);
   const quillRef = useRef<Quill | null>(null);
   const [image, setimage] = useState<File | boolean>(false);
-  const [tittle, settittle] = useState('');
-  const [subtittle, setsubtittle] = useState('');
+  const [title, settitle] = useState('');
+  const [subtitle, setsubtitle] = useState('');
   const [category, setcategory] = useState('Startup');
   const [isPublished, setisPublished] = useState(false);
 
-  const generatewithai = () => {
-    console.log("AI generate");
+  const generatewithai = async () => {
+    if (!title) return toast.error("Please Enter the title");
+    try {
+      setIsLoading(true)
+      const { data } = await axios.post("/api/blog/generate", { prompt: title });
+      if (data.success) {
+        if (data.content && quillRef.current) {
+          const parsedContent = await parse(data.content);
+          quillRef.current.root.innerHTML = parsedContent;
+        }
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }finally{
+      setIsLoading(false)
+    }
   }
 
   const handelSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    try {
+      e.preventDefault();
+      setIsadding(true);
+      if (!quillRef.current) {
+        return
+      }
+      const blog = {
+        title,
+        subTitle: subtitle,
+        description: quillRef.current.root.innerHTML,
+        category,
+        author: "Admin",
+        ispublished: isPublished
+      }
+
+      const formData = new FormData();
+      formData.append('blog', JSON.stringify(blog))
+      if (image instanceof File) {
+        formData.append('image', image);
+      }
+
+      const { data } = await axios.post("/api/blog/add", formData);
+      if (data.success) {
+        toast.success(data.message);
+        setimage(false)
+        settitle('')
+        quillRef.current.root.innerHTML = ''
+        setcategory('StartUp')
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      if (error instanceof Error) { toast.error(error.message); }
+    } finally {
+      setIsadding(false);
+    }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,23 +109,23 @@ export default function AddBlog() {
                 placeholder="Enter an engaging blog title..."
                 className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all"
                 required
-                onChange={(e) => settittle(e.target.value)}
-                value={tittle}
+                onChange={(e) => settitle(e.target.value)}
+                value={title}
               />
             </div>
 
-            {/* Subtitle */}
+            {/* subTitle */}
             <div>
               <label className="block text-slate-300 text-sm font-medium mb-2">
-                Subtitle <span className="text-red-400">*</span>
+                subTitle <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
-                placeholder="Add a compelling subtitle"
+                placeholder="Add a compelling subTitle"
                 className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all"
                 required
-                onChange={(e) => setsubtittle(e.target.value)}
-                value={subtittle}
+                onChange={(e) => setsubtitle(e.target.value)}
+                value={subtitle}
               />
             </div>
 
@@ -168,7 +224,7 @@ export default function AddBlog() {
                 <div
                   ref={editorRef}
                   contentEditable
-                  className="w-full min-h-[360px] px-4 py-3 pb-16 bg-slate-800/50 border border-slate-700 border-t-0 rounded-b-xl text-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all overflow-y-auto empty:before:content-[attr(data-placeholder)] empty:before:text-slate-500"
+                  className="w-full min-h-90 px-4 py-3 pb-16 bg-slate-800/50 border border-slate-700 border-t-0 rounded-b-xl text-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all overflow-y-auto empty:before:content-[attr(data-placeholder)] empty:before:text-slate-500"
                   data-placeholder="Write your blog content here... Use the toolbar above for formatting or click 'Generate with AI' to create content automatically."
                   style={{
                     caretColor: 'white'
@@ -177,9 +233,10 @@ export default function AddBlog() {
 
                 {/* AI Generation Button - Bottom Right */}
                 <button
+                  disabled={isLoading}
                   onClick={generatewithai}
                   type="button"
-                  className="absolute bottom-3 right-3 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-lime-400 to-emerald-400 text-emerald-950 rounded-lg font-semibold text-sm hover:from-lime-500 hover:to-emerald-500 transition-all shadow-lg shadow-lime-400/20 whitespace-nowrap"
+                  className="absolute bottom-3 right-3 flex items-center gap-2 px-4 py-2 bg-linear-to-r from-lime-400 to-emerald-400 text-emerald-950 rounded-lg font-semibold text-sm hover:from-lime-500 hover:to-emerald-500 transition-all shadow-lg shadow-lime-400/20 whitespace-nowrap"
                 >
                   <Sparkles className="w-4 h-4" />
                   Generate with AI
@@ -210,7 +267,7 @@ export default function AddBlog() {
             {/* Action Buttons */}
             <div className="flex items-center gap-3 pt-4">
               <button disabled={isadding} type='submit' className="px-8 py-3 bg-lime-400 text-emerald-950 font-bold rounded-xl hover:bg-lime-500 active:scale-95 transition-all shadow-lg shadow-lime-400/20">
-                {isadding ? "Adding ...":"Add Blog"}
+                {isadding ? "Adding ..." : "Add Blog"}
               </button>
 
             </div>

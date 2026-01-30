@@ -1,11 +1,10 @@
+import { ArrowLeft, Plus, Search } from 'lucide-react';
 import { useState } from 'react';
-import { ArrowLeft, Search, Plus } from 'lucide-react';
 import { blog_data } from '../../assets/data.ts';
-import { Pagination } from './Pagination.tsx';
-import Blogcard from '../Blogcard.tsx';
-import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../context/appContext.tsx';
 import type { Blog } from '../../types/index.ts';
+import Blogcard from '../Blogcard.tsx';
+import { Pagination } from './Pagination.tsx';
 
 interface BlogpageProps {
   setCurrentPage?: (page: string) => void;

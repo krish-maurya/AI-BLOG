@@ -1,13 +1,60 @@
-import React, { useEffect, useState } from 'react'
 import { X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { useAppContext } from '../../../context/appContext';
 import type { Comment } from '../../../types';
-import { comments_data } from '../../../assets/data';
 export default function Comments() {
     const [comments, setComments] = useState<Comment[]>([]);
-    const [filter, setFilter] = useState<string>('Not Approved');
+
+    const { axios } = useAppContext();
 
     const fetchComments = async () => {
-        setComments(comments_data);
+        try {
+            const { data } = await axios.get("/api/admin/comments")
+            if (data.success) {
+                setComments(data.comments)
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message)
+            }
+        }
+    }
+
+    const approveComment=async(comment : Comment)=>{
+        try {
+            const { data } = await axios.post("/api/admin/approve-comment",{id : comment.id})
+            if (data.success) {
+                toast.success(data.message)
+                await fetchComments()
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message)
+            }
+        }
+    }
+
+     const deleteComment=async(comment : Comment)=>{
+        try {
+            const confirm = window.confirm("Are you sure you want to delete this comment")
+            if(!confirm) return;
+            const { data } = await axios.post("/api/admin/delete-comment",{id : comment.id})
+            if (data.success) {
+                toast.success(data.message)
+                await fetchComments()
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message)
+            }
+        }
     }
 
     useEffect(() => {
@@ -22,7 +69,7 @@ export default function Comments() {
                     <div key={i} className="bg-slate-800/50 border border-slate-700 rounded-xl p-4">
                         <div className="flex items-start justify-between gap-4">
                             <div className="flex items-start gap-3 flex-1">
-                                <div className="w-10 h-10 bg-lime-400/10 rounded-full flex items-center justify-center text-lime-400 font-bold flex-shrink-0">
+                                <div className="w-10 h-10 bg-lime-400/10 rounded-full flex items-center justify-center text-lime-400 font-bold shrink-0">
                                     {comment.name.charAt(0).toUpperCase()}
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -40,10 +87,10 @@ export default function Comments() {
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <button onClick={() => comment.isApproved = !comment.isApproved} className={`px-3 py-1.5 text-xs font-medium ${comment.isApproved ? "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20" : "text-red-400 bg-red-500/10 border border-red-500/20"} rounded-lg hover:bg-emerald-500/20 transition-all`}>
+                                <button onClick={() => approveComment(comment)} className={`px-3 py-1.5 text-xs font-medium ${comment.isApproved ? "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20" : "text-red-400 bg-red-500/10 border border-red-500/20"} rounded-lg hover:bg-emerald-500/20 transition-all`}>
                                     {comment.isApproved ? "Approve" : "Not Approved"}
                                 </button>
-                                <button className="p-1.5 text-red-400 hover:bg-red-500/10 border border-red-500/20 rounded-lg hover:text-red-300 transition-all">
+                                <button onClick={()=>deleteComment(comment)} className="p-1.5 text-red-400 hover:bg-red-500/10 border border-red-500/20 rounded-lg hover:text-red-300 transition-all">
                                     <X className="w-4 h-4" />
                                 </button>
                             </div>

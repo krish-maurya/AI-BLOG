@@ -1,6 +1,6 @@
 import { LayoutDashboard, List, LogOut, Menu, MessageSquare, Plus, X } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useAppContext } from '../../../context/appContext';
 import AddBlog from './AddBlog';
 import Comments from './Comments';
 import Dashboard from './Dashboard';
@@ -9,7 +9,14 @@ import Listblogs from './Listblogs';
 export default function Layout() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const navigate = useNavigate();
+  const { navigate, axios, setToken } = useAppContext();
+
+  const logout = () => {
+    localStorage.removeItem('token')
+    axios.defaults.headers.common['Authorization'] = null;
+    setToken(null)
+    navigate('/')
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 flex">
@@ -18,10 +25,10 @@ export default function Layout() {
         {/* Logo */}
         <div className="p-6 border-b border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <span className="text-white text-xl font-bold">Q</span>
+            <div className="w-10 h-10 bg-lime-400 rounded-xl flex items-center justify-center shadow-lg shadow-lime-400/20">
+              <span className="text-emerald-950 text-xl font-bold">i</span>
             </div>
-            <span className="font-serif text-xl text-white italic">Quickblog</span>
+            <span className="font-serif text-xl text-white italic">inspier</span>
           </div>
         </div>
 
@@ -31,11 +38,10 @@ export default function Layout() {
             <li>
               <button
                 onClick={() => setActiveTab('dashboard')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                  activeTab === 'dashboard'
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'dashboard'
                     ? 'bg-lime-400/10 text-lime-400 border border-lime-400/20'
                     : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                }`}
+                  }`}
               >
                 <LayoutDashboard className="w-5 h-5" />
                 <span className="font-medium">Dashboard</span>
@@ -44,11 +50,10 @@ export default function Layout() {
             <li>
               <button
                 onClick={() => setActiveTab('addBlogs')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                  activeTab === 'addBlogs'
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'addBlogs'
                     ? 'bg-lime-400/10 text-lime-400 border border-lime-400/20'
                     : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                }`}
+                  }`}
               >
                 <Plus className="w-5 h-5" />
                 <span className="font-medium">Add blogs</span>
@@ -57,11 +62,10 @@ export default function Layout() {
             <li>
               <button
                 onClick={() => setActiveTab('blogsList')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                  activeTab === 'blogsList'
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'blogsList'
                     ? 'bg-lime-400/10 text-lime-400 border border-lime-400/20'
                     : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                }`}
+                  }`}
               >
                 <List className="w-5 h-5" />
                 <span className="font-medium">Blogs list</span>
@@ -70,11 +74,10 @@ export default function Layout() {
             <li>
               <button
                 onClick={() => setActiveTab('comments')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                  activeTab === 'comments'
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'comments'
                     ? 'bg-lime-400/10 text-lime-400 border border-lime-400/20'
                     : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                }`}
+                  }`}
               >
                 <MessageSquare className="w-5 h-5" />
                 <span className="font-medium">Comments</span>
@@ -103,7 +106,7 @@ export default function Layout() {
                 {activeTab === 'comments' && 'Comments'}
               </h1>
             </div>
-            <button onClick={() => navigate('/')} className="flex items-center gap-2 px-4 py-2 bg-lime-400 text-emerald-950 rounded-xl font-medium hover:bg-lime-500 transition-all">
+            <button onClick={logout} className="flex items-center gap-2 px-4 py-2 bg-lime-400 text-emerald-950 rounded-xl font-medium hover:bg-lime-500 transition-all">
               <LogOut className="w-4 h-4" />
               Logout
             </button>
@@ -113,7 +116,7 @@ export default function Layout() {
         {/* Content Area */}
         <main className="flex-1 p-6 overflow-auto">
           {activeTab === 'dashboard' && (
-            <Dashboard  />
+            <Dashboard />
           )}
 
           {activeTab === 'addBlogs' && (
@@ -121,7 +124,7 @@ export default function Layout() {
           )}
 
           {activeTab === 'blogsList' && (
-          <Listblogs />
+            <Listblogs />
           )}
 
           {activeTab === 'comments' && (

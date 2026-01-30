@@ -1,4 +1,3 @@
-import { ThumbsUp, Bookmark } from 'lucide-react';
 import type { Blog } from '../types';
 
 interface BlogCardProps {
@@ -21,7 +20,7 @@ export default function Blogcard({ blog, onClick }: BlogCardProps) {
           alt={title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
       </div>
 
       {/* Content */}
@@ -33,22 +32,6 @@ export default function Blogcard({ blog, onClick }: BlogCardProps) {
           className="text-sm text-slate-400 leading-relaxed line-clamp-3"
           dangerouslySetInnerHTML={{ __html: description.slice(0, 120) }}
         />
-
-        {/* Actions */}
-        <div className="flex justify-end gap-3 mt-5">
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className="w-9 h-9 flex items-center justify-center rounded-full border border-slate-700 text-slate-400 hover:border-lime-400 hover:text-lime-400 transition"
-          >
-            <ThumbsUp size={16} />
-          </button>
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className="w-9 h-9 flex items-center justify-center rounded-full border border-slate-700 text-slate-400 hover:border-lime-400 hover:text-lime-400 transition"
-          >
-            <Bookmark size={16} />
-          </button>
-        </div>
       </div>
     </div>
   );

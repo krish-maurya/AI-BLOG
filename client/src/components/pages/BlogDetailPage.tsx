@@ -1,11 +1,10 @@
-import { ArrowLeft, Bookmark, Heart, MessageSquare, Share2, Sparkles } from 'lucide-react';
+import { ArrowLeft, MessageSquare, Share2, Sparkles } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { blog_data, comments_data } from '../../assets/data';
-import Loder from '../Loder';
-import type { Blog, Comment } from '../../types';
-import { useAppContext } from '../../context/appContext';
 import toast from 'react-hot-toast';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAppContext } from '../../context/appContext';
+import type { Blog, Comment } from '../../types';
+import Loder from '../Loder';
 
 
 export default function BlogDetailPage() {
@@ -60,6 +59,14 @@ export default function BlogDetailPage() {
     }
   }
 
+  const handleShare = async () => {
+    try {
+    await navigator.clipboard.writeText(window.location.href);
+    toast.success('Link copied to clipboard!');
+  } catch (error) {
+    toast.error('Failed to copy link');
+  }
+  };
 
   useEffect(() => {
     fetchBlogData();
@@ -75,14 +82,14 @@ export default function BlogDetailPage() {
         <div className="flex items-center gap-2">
           <span className="text-xl font-serif italic text-white"><i>Inspire</i></span>
         </div>
-        <button className="p-2 bg-slate-800 rounded-full shadow-sm text-lime-400">
+        <button onClick={()=>handleShare()} className="p-2 bg-slate-800 rounded-full shadow-sm text-lime-400">
           <Share2 className="w-5 h-5" />
         </button>
       </nav>
 
       <main className="pb-24">
         {/* Header Section with Dark Gradient */}
-        <header className="relative overflow-hidden pt-32 pb-20 px-6 text-center bg-gradient-to-b from-slate-950 via-emerald-950 to-emerald-900">
+        <header className="relative overflow-hidden pt-32 pb-20 px-6 text-center bg-linear-to-b from-slate-950 via-emerald-950 to-emerald-900">
           {/* Decorative Blurs */}
           <div className="absolute -top-20 -right-20 w-64 h-64 bg-lime-400/20 rounded-full blur-3xl"></div>
           <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
@@ -100,11 +107,6 @@ export default function BlogDetailPage() {
 
             {/* Author Info */}
             <div className="flex items-center gap-3 text-white/80 text-sm font-medium">
-              <img
-                alt="Author avatar"
-                className="w-8 h-8 rounded-full border border-white/20"
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop"
-              />
               <span>{data.author}</span>
               <span className="opacity-40">•</span>
               <span>4 min read</span>
@@ -203,24 +205,18 @@ export default function BlogDetailPage() {
 
 
         {/* Floating Action Bar */}
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-3 bg-slate-800/80 backdrop-blur-xl border border-slate-700 rounded-full shadow-2xl flex items-center gap-6 z-50">
-          <button className="flex items-center gap-2 group">
-            <Heart className="w-5 h-5 text-slate-400 group-hover:text-lime-400 transition-colors" />
-            <span className="text-sm font-semibold text-slate-300">242</span>
-          </button>
-          <div className="w-px h-6 bg-slate-700"></div>
-          <button onClick={() =>
-            commentRef.current?.scrollIntoView({
-              behavior: "smooth",
-              block: "start",
-            })
-          } className="flex items-center gap-2 group">
+        <div className="fixed bottom-6 right-6 px-4 py-3 bg-slate-800/80 backdrop-blur-xl border border-slate-700 rounded-full shadow-2xl z-50">
+          <button
+            onClick={() =>
+              commentRef.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              })
+            }
+            className="flex items-center gap-2 group"
+          >
             <MessageSquare className="w-5 h-5 text-slate-400 group-hover:text-lime-400 transition-colors" />
             <span className="text-sm font-semibold text-slate-300">{comments.length}</span>
-          </button>
-          <div className="w-px h-6 bg-slate-700"></div>
-          <button className="flex items-center gap-2 group">
-            <Bookmark className="w-5 h-5 text-slate-400 group-hover:text-lime-400 transition-colors" />
           </button>
         </div>
       </main>
