@@ -2,6 +2,7 @@ import fs from "fs";
 import { Request, Response } from "express";
 import imagekit from "../config/ImageKit.js";
 import { prisma } from "../lib/prisma.js";
+import main from "../config/Gemini.js";
 
 interface transformation {
     quality: number;
@@ -17,11 +18,11 @@ interface BuildUrlOptions {
 
 export const addBlog = async (req: Request, res: Response) => {
     try {
-        const { title, subtitle, description, category, author, ispublished } = JSON.parse(req.body.blog);
+        const { title, subTitle, description, category, author, ispublished } = JSON.parse(req.body.blog);
         const imageFile = (req as any).file;
 
         // all field validation
-        if (!title || !subtitle || !description || !category || !author) {
+        if (!title || !subTitle || !description || !category || !author) {
             return res.json({ success: false, message: "All fields are required" });
         }
         if (!imageFile) {
@@ -54,7 +55,7 @@ export const addBlog = async (req: Request, res: Response) => {
         await prisma.blog.create({
             data: {
                 title,
-                subTitle: subtitle,
+                subTitle,
                 description,
                 category,
                 author,
@@ -124,14 +125,15 @@ export const getBlogById = async (req: Request, res: Response) => {
 export const deleteBlogById = async (req: Request, res: Response) => {
     try {
         const { id } = req.body;
-        await prisma.blog.delete({
-            where: { id }
-        })
 
-        //delete related comments
+        //  Delete related comments FIRST
         await prisma.comment.deleteMany({
             where: { blogId: id }
-        })
+        });
+
+        await prisma.blog.delete({
+            where: { id }
+        });
 
         res.json({ success: true, message: "Blog deleted successfully" });
     } catch (error) {
@@ -153,7 +155,12 @@ export const togglePublished = async (req: Request, res: Response) => {
         if (!Blog) {
             return res.json({ success: false, message: "Blog not found" });
         }
-        Blog.isPublished = !Blog.isPublished;
+        await prisma.blog.update({
+            where: { id },
+            data: {
+                isPublished: !Blog.isPublished
+            }
+        });
         res.json({ success: true, message: "Blog status updated successfully" });
     } catch (error) {
         if (error instanceof Error) {
@@ -200,6 +207,27 @@ export const getBlogComment = async (req: Request, res: Response) => {
             },
         })
         res.json({ success: true, comment });
+    } catch (error) {
+        if (error instanceof Error) {
+            res.json({ success: false, message: error.message });
+        } else {
+            res.json({ success: false, message: "Something went wrong" });
+        }
+    }
+}
+
+export const generateContent = async (req: Request, res: Response) => {
+    try {
+
+        const { prompt } = req.body;
+        const content = await main(prompt + `Generate a detailed blog article on the given topic in simple and easy-to-understand language.
+Return the content using common HTML tags only.
+Use <h1> for the main title, <h2> for section headings, and <p> for paragraphs.
+Explain concepts clearly for beginners, use short paragraphs, and include real-life examples where possible.
+Do not use markdown, emojis, or advanced HTML tags.
+Return only valid HTML content.
+`)
+        res.json({ success: true, content });
     } catch (error) {
         if (error instanceof Error) {
             res.json({ success: false, message: error.message });
