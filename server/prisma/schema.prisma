@@ -14,12 +14,6 @@ datasource db {
 }
 
 // Define your database schema here
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-}
 
 model Blog {
   id          String    @id @default(uuid())

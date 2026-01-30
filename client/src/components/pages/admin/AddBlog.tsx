@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react';
+import { Sparkles, X } from 'lucide-react';
 import { parse } from 'marked';
 import Quill from 'quill';
 import React, { useEffect, useRef, useState } from 'react';
@@ -6,12 +6,13 @@ import toast from 'react-hot-toast';
 import { useAppContext } from '../../../context/appContext';
 
 export default function AddBlog() {
-  const { axios } = useAppContext();
+  const { axios, navigate } = useAppContext();
   const [isadding, setIsadding] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const editorRef = useRef(null);
   const quillRef = useRef<Quill | null>(null);
   const [image, setimage] = useState<File | boolean>(false);
+  const [author, setAuthor] = useState('')
   const [title, settitle] = useState('');
   const [subtitle, setsubtitle] = useState('');
   const [category, setcategory] = useState('Startup');
@@ -34,7 +35,7 @@ export default function AddBlog() {
       if (error instanceof Error) {
         toast.error(error.message);
       }
-    }finally{
+    } finally {
       setIsLoading(false)
     }
   }
@@ -51,8 +52,8 @@ export default function AddBlog() {
         subTitle: subtitle,
         description: quillRef.current.root.innerHTML,
         category,
-        author: "Admin",
-        ispublished: isPublished
+        author,
+        ispublished: isPublished,
       }
 
       const formData = new FormData();
@@ -66,6 +67,8 @@ export default function AddBlog() {
         toast.success(data.message);
         setimage(false)
         settitle('')
+        setAuthor('')
+        setsubtitle('')
         quillRef.current.root.innerHTML = ''
         setcategory('StartUp')
       } else {
@@ -97,8 +100,34 @@ export default function AddBlog() {
     <form onSubmit={handelSubmit} className="min-h-screen bg-slate-950 p-6">
       <div className="max-w-5xl mx-auto">
         <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8">
-          <h2 className="text-2xl font-serif text-white mb-6">Create New Blog Post</h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-serif text-white">
+              Create New Blog Post
+            </h2>
+
+            <button
+              onClick={()=>navigate(-1)}
+              className="text-slate-400 hover:text-white transition-colors"
+            >
+              <X size={24} />
+            </button>
+          </div>
           <div className="space-y-6">
+            {/* Blog Title */}
+            <div>
+              <label className="block text-slate-300 text-sm font-medium mb-2">
+                Author <span className="text-red-400">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Enter author name..."
+                className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all"
+                required
+                onChange={(e) => setAuthor(e.target.value)}
+                value={author}
+              />
+            </div>
+
             {/* Blog Title */}
             <div>
               <label className="block text-slate-300 text-sm font-medium mb-2">
@@ -195,16 +224,13 @@ export default function AddBlog() {
               <label className="block text-slate-300 text-sm font-medium mb-2">
                 Blog Category <span className="text-red-400">*</span>
               </label>
-              <select onChange={(e) => setcategory(e.target.value)} className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all" required>
+              <select onChange={(e) => setcategory(e.target.value)} className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all appearance-none cursor-pointer" required>
                 <option value="">Select a category</option>
                 <option value="technology">Technology</option>
                 <option value="lifestyle">Lifestyle</option>
                 <option value="business">Business</option>
-                <option value="health">Health & Wellness</option>
                 <option value="travel">Travel</option>
-                <option value="food">Food & Recipes</option>
-                <option value="education">Education</option>
-                <option value="entertainment">Entertainment</option>
+                <option value="food">Food</option>
               </select>
             </div>
 
@@ -214,17 +240,13 @@ export default function AddBlog() {
                 Blog Content <span className="text-red-400">*</span>
               </label>
 
-              {/* Text Editor Toolbar */}
-              <div className="bg-slate-800/50 border border-slate-700 rounded-t-xl p-3 flex items-center gap-2 flex-wrap">
-                {/* Your toolbar buttons (Bold, Italic, Underline, Link, Lists, etc.) */}
-              </div>
 
               {/* Styled Editor Div with AI Button Inside */}
               <div className="relative">
                 <div
                   ref={editorRef}
                   contentEditable
-                  className="w-full min-h-90 px-4 py-3 pb-16 bg-slate-800/50 border border-slate-700 border-t-0 rounded-b-xl text-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all overflow-y-auto empty:before:content-[attr(data-placeholder)] empty:before:text-slate-500"
+                  className="ql"
                   data-placeholder="Write your blog content here... Use the toolbar above for formatting or click 'Generate with AI' to create content automatically."
                   style={{
                     caretColor: 'white'
@@ -232,6 +254,9 @@ export default function AddBlog() {
                 />
 
                 {/* AI Generation Button - Bottom Right */}
+                {isLoading && (<div className='absolute right-0 top-0 bottom-0 left-0 flex items-center justify-center bg-black/10 mt-2'>
+                  <div className='w-8 h-8 rounded-full border-2 border-t-lime-400 animate-spin'></div>
+                </div>)}
                 <button
                   disabled={isLoading}
                   onClick={generatewithai}

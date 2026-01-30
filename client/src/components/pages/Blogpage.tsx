@@ -97,7 +97,7 @@ export default function Blogpage({ setCurrentPage }: BlogpageProps) {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         {currentCards
           .filter((blog:Blog) =>
-            menu === 'All' ? true : blog.category === menu
+            menu === 'All' ? true : blog.category.toLowerCase() === menu.toLowerCase()
           )
           .filter((blog:Blog) =>
             blog.title.toLowerCase().includes(searchQuery.toLowerCase())

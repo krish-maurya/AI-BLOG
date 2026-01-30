@@ -21,3 +21,79 @@
 .blog-content {
   @apply text-slate-400;
 }
+
+/* Quill Editor Custom Styles */
+.ql-toolbar {
+  background-color: rgba(30, 41, 59, 0.5) !important;
+  border: none !important;
+  border-bottom: 1px solid rgb(51, 65, 85) !important;
+  border-radius: 0.75rem 0.75rem 0 0 !important;
+  padding: 0.75rem !important;
+}
+
+.ql-container {
+  background-color: rgba(30, 41, 59, 0.5) !important;
+  border: none !important;
+  border-radius: 0 0 0.75rem 0.75rem !important;
+  min-height: 400px !important;
+  font-size: 1rem !important;
+  color: rgb(226, 232, 240) !important;
+}
+
+.ql-editor {
+  min-height: 400px !important;
+  padding: 1rem !important;
+  color: rgb(226, 232, 240) !important;
+}
+
+.ql-editor.ql-blank::before {
+  color: rgb(100, 116, 139) !important;
+  font-style: normal !important;
+  content: 'Write your blog content here...' !important;
+}
+
+/* Quill Toolbar Buttons */
+.ql-toolbar button {
+  color: rgb(148, 163, 184) !important;
+}
+
+.ql-toolbar button:hover {
+  color: rgb(163, 230, 53) !important;
+}
+
+.ql-toolbar button.ql-active {
+  color: rgb(163, 230, 53) !important;
+}
+
+.ql-stroke {
+  stroke: rgb(148, 163, 184) !important;
+}
+
+.ql-toolbar button:hover .ql-stroke,
+.ql-toolbar button.ql-active .ql-stroke {
+  stroke: rgb(163, 230, 53) !important;
+}
+
+.ql-fill {
+  fill: rgb(148, 163, 184) !important;
+}
+
+.ql-toolbar button:hover .ql-fill,
+.ql-toolbar button.ql-active .ql-fill {
+  fill: rgb(163, 230, 53) !important;
+}
+
+/* Dropdown styling */
+.ql-picker-label {
+  color: rgb(148, 163, 184) !important;
+}
+
+.ql-picker-options {
+  background-color: rgb(30, 41, 59) !important;
+  border: 1px solid rgb(51, 65, 85) !important;
+  border-radius: 0.5rem !important;
+}
+
+.ql-picker-item:hover {
+  color: rgb(163, 230, 53) !important;
+}

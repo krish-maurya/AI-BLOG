@@ -1,11 +1,9 @@
 import { ArrowRight } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Blogpage from './Blogpage';
-import { useAppContext } from '../../context/appContext';
 
 export default function App() {
 
-  const { navigate , token}=useAppContext();
 
   // Initialize state from localStorage or default to 'home'
   const [currentPage, setCurrentPage] = useState(() => {
@@ -43,9 +41,6 @@ export default function App() {
             <h1 className="text-white text-[20px] font-semibold cursor-pointer">
               Inspire.
             </h1>
-            <button onClick={()=>navigate('/login')} className="text-white border-2 border-white px-6 py-1 rounded-full hover:bg-[#F2F1CD] hover:text-green-900 transition-all duration-300 text-sm md:text-base font-medium">
-              {token ?"Dashboard": "Log In"}
-            </button>
           </header>
 
           {/* Main Content */}
