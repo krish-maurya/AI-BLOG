@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "prisma generate && tsc",
+    "prebuild": "prisma generate",
+    "build": "tsc",
     "dev": "ts-node src/server.ts",
     "start": "node dist/server.js"
   },
