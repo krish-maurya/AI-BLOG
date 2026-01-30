@@ -11,7 +11,7 @@ interface BlogpageProps {
 }
 
 export default function Blogpage({ setCurrentPage }: BlogpageProps) {
-  const {blogs,navigate }=useAppContext();
+  const { blogs, navigate } = useAppContext();
 
 
   const [menu, setMenu] = useState('All');
@@ -19,11 +19,11 @@ export default function Blogpage({ setCurrentPage }: BlogpageProps) {
   const [cardperPage] = useState(8);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filterBlogs = ()=>{
-    if(searchQuery===''){
+  const filterBlogs = () => {
+    if (searchQuery === '') {
       return blogs
     }
-    return blogs.filter((blog : Blog)=>blog.title.toLowerCase().includes(searchQuery.toLowerCase()) || blog.category.toLocaleLowerCase().includes(searchQuery.toLowerCase()));
+    return blogs.filter((blog: Blog) => blog.title.toLowerCase().includes(searchQuery.toLowerCase()) || blog.category.toLocaleLowerCase().includes(searchQuery.toLowerCase()));
   }
 
   const lastCardIndex = currentPageBlog * cardperPage;
@@ -49,8 +49,10 @@ export default function Blogpage({ setCurrentPage }: BlogpageProps) {
             onClick={handleBackClick}
             className="flex items-center gap-2 text-slate-300 hover:text-lime-400 transition"
           >
-            <ArrowLeft size={18} />
-            <span className="text-sm font-semibold tracking-widest uppercase">Back</span>
+            <div>
+              <ArrowLeft size={18} />
+              <span className="text-sm font-semibold tracking-widest uppercase">Back</span>
+            </div>
           </button>
 
           {/* Search */}
@@ -79,11 +81,10 @@ export default function Blogpage({ setCurrentPage }: BlogpageProps) {
             <button
               key={category}
               onClick={() => setMenu(category)}
-              className={`px-5 py-2 rounded-full text-sm font-medium border transition whitespace-nowrap ${
-                menu === category
-                  ? 'bg-lime-400 text-emerald-950 border-lime-400'
-                  : 'border-slate-700 text-slate-400 hover:border-lime-400 hover:text-lime-400'
-              }`}
+              className={`px-5 py-2 rounded-full text-sm font-medium border transition whitespace-nowrap ${menu === category
+                ? 'bg-lime-400 text-emerald-950 border-lime-400'
+                : 'border-slate-700 text-slate-400 hover:border-lime-400 hover:text-lime-400'
+                }`}
             >
               {category}
             </button>
@@ -96,13 +97,13 @@ export default function Blogpage({ setCurrentPage }: BlogpageProps) {
       {/* Blog Grid */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         {currentCards
-          .filter((blog:Blog) =>
+          .filter((blog: Blog) =>
             menu === 'All' ? true : blog.category.toLowerCase() === menu.toLowerCase()
           )
-          .filter((blog:Blog) =>
+          .filter((blog: Blog) =>
             blog.title.toLowerCase().includes(searchQuery.toLowerCase())
           )
-          .map((blog:Blog) => (
+          .map((blog: Blog) => (
             <Blogcard
               key={blog.id}
               blog={blog}

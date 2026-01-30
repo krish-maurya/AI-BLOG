@@ -22,7 +22,13 @@ export default function AddBlog() {
     if (!title) return toast.error("Please Enter the title");
     try {
       setIsLoading(true)
-      const { data } = await axios.post("/api/blog/generate", { prompt: title });
+      // Create a new axios instance without interceptors
+      const publicAxios = axios.create({
+        baseURL: axios.defaults.baseURL
+      });
+
+      const { data } = await publicAxios.post("/api/blog/generate", { prompt: title });
+
       if (data.success) {
         if (data.content && quillRef.current) {
           const parsedContent = await parse(data.content);
@@ -106,7 +112,7 @@ export default function AddBlog() {
             </h2>
 
             <button
-              onClick={()=>navigate(-1)}
+              onClick={() => navigate(-1)}
               className="text-slate-400 hover:text-white transition-colors"
             >
               <X size={24} />
