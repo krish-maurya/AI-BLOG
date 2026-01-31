@@ -37,7 +37,6 @@ app.use('/api/user', userRouter);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT)
 
-// export default app;
+export default app;
 
