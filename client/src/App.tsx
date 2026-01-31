@@ -9,7 +9,7 @@ import AddBlog from "./components/pages/admin/AddBlog";
 import Layout from "./components/pages/admin/Layout";
 import { useAppContext } from "./context/appContext";
 import "./index.css";
-import UserLogin from './components/pages/userLogin';
+import UserLogin from './components/pages/UserLogin';
 
 function App() {
   const {token}=useAppContext();

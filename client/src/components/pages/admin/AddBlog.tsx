@@ -21,7 +21,6 @@ export default function AddBlog() {
     if (!title) return toast.error("Please Enter the title");
     try {
       setIsLoading(true);
-      const baseURL = (import.meta as any).env.VITE_BASE_URL;
       
       const {data} =  await axios.post("/api/blog/generate",{prompt : title})
       
