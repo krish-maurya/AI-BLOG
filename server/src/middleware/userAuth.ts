@@ -1,42 +1,76 @@
 import jwt from "jsonwebtoken";
-import { Request, Response ,NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
+import { prisma } from "../lib/prisma.js";
 
 declare global {
     namespace Express {
         interface Request {
-            user?: {
+            user: {
                 email: string;
                 role: string;
                 name: string;
+                id: string;
             };
         }
     }
 }
 
-const userAuth = (req: Request, res: Response, next: NextFunction) => {
+const userAuth = async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
-    try {
-        const decoded = jwt.verify(token!, process.env.JWT_SECRET!) as {
-        email: string;
-        role: string;
-        name: string;
-    };
-
-    // Check if role is USER
-    console.log(decoded)
-    if (decoded.role !== 'USER') {
-        return res.status(403).json({ 
+    
+    if (!token) {
+        return res.status(401).json({ 
             success: false, 
-            message: 'Only users with USER role can access this resource' 
+            message: 'No token provided' 
         });
     }
 
-    // Continue with your logic
-    req.user = decoded;
-    next();
+    try {
+        // Decode the token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+            email: string;
+            role: string;
+            name: string;
+        };
+
+        // Fetch user from database to get current role
+        const user = await prisma.user.findUnique({
+            where: { email: decoded.email },
+            select: { id: true, email: true, role: true, name: true }
+        });
+
+        if (!user) {
+            return res.status(401).json({ 
+                success: false, 
+                message: 'User not found' 
+            });
+        }
+
+        console.log("User from database:", user);
+
+        // Check role from database (case-insensitive)
+        if (user.role.toLowerCase() !== 'user') {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Only users with USER role can access this resource' 
+            });
+        }
+
+        // Attach user to request with database values
+        req.user = {
+            id: user.id,
+            email: user.email,
+            role: user.role,
+            name: user.name
+        };
+        
+        next();
     } catch (error) {
         if (error instanceof Error) {
-            res.json({ success: false, message: "Invalid token" });
+            return res.status(401).json({ 
+                success: false, 
+                message: "Invalid or expired token" 
+            });
         }
     }
 }
