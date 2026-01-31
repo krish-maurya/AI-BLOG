@@ -106,7 +106,7 @@ npm run dev
 
 Frontend
 npm run dev
-
+```
 📁 Project Structure
 AI-BLOG/
 │
@@ -120,7 +120,7 @@ AI-BLOG/
 │
 ├── README.md
 └── .env
-
+```
 🛡️ Security Practices
 
 JWT-based authentication
