@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
+import { error } from "node:console";
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
@@ -32,7 +33,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
 
         // Check role from database (case-insensitive)
         if (user.role.toLowerCase() === 'user') {
-            return res.json({ 
+            return res.status(403).json({ 
                 success: false, 
                 message: 'Users are not allowed to access this route' 
             });
@@ -40,7 +41,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
         next();
     } catch (error) {
         if (error instanceof Error) {
-            res.json({ success: false, message: "Invalid token" });
+            return res.json({ success: false, message: "Invalid token" });
         }
     }
 }
