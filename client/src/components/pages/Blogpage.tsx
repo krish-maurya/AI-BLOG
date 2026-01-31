@@ -11,7 +11,7 @@ interface BlogpageProps {
 }
 
 export default function Blogpage({ setCurrentPage }: BlogpageProps) {
-  const { blogs, navigate ,token } = useAppContext();
+  const { blogs, navigate, token } = useAppContext();
 
 
   const [menu, setMenu] = useState('All');
@@ -32,13 +32,13 @@ export default function Blogpage({ setCurrentPage }: BlogpageProps) {
 
   const blogCategories = ['All', 'Technology', 'Lifestyle', 'Business', 'Travel', 'Food'];
 
-  const handelCreateClick = () =>{
-    if(token){
+  const handelCreateClick = () => {
+    if (token) {
       navigate('/addblog')
-    }else{
+    } else {
       navigate('/login')
     }
-    
+
   }
 
   const handleBackClick = () => {
@@ -56,9 +56,9 @@ export default function Blogpage({ setCurrentPage }: BlogpageProps) {
         <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
           <button
             onClick={() => handleBackClick()}
-            className="flex some-specific-classitems-center gap-2 text-slate-300 hover:text-lime-400 transition"
+            className="flex text-sm cursor-pointer font-semibold tracking-widest uppercase some-specific-classitems-center gap-2 text-slate-300 hover:text-lime-400 transition"
           ><ArrowLeft size={18} />
-            <span className="text-sm font-semibold tracking-widest uppercase">Back</span>
+            Back
           </button>
 
           {/* Search */}
@@ -76,18 +76,18 @@ export default function Blogpage({ setCurrentPage }: BlogpageProps) {
           </div>
 
           {/* Create */}
-          <button onClick={() => handelCreateClick ()} className="flex items-center gap-2 px-6 py-3 rounded-xl bg-lime-400 text-emerald-950 font-semibold hover:scale-105 transition">
+          <button onClick={() => handelCreateClick()} className="flex items-center gap-2 px-6 py-3 rounded-xl bg-lime-400 text-emerald-950 font-semibold hover:scale-105 transition">
             <Plus size={18} /> Create Blog
           </button>
         </div>
 
         {/* Categories */}
-        <div className="flex gap-3 some-specific-class mt-8 overflow-x-auto justify-center">
+        <div className="flex gap-3 mt-8 overflow-x-auto justify-start md:justify-center pb-2 px-4 -mx-4">
           {blogCategories.map((category) => (
             <button
               key={category}
               onClick={() => setMenu(category)}
-              className={`px-5 py-2 rounded-full text-sm font-medium border transition whitespace-nowrap ${menu === category
+              className={`px-5 py-2 rounded-full cursor-pointer text-sm font-medium border transition whitespace-nowrap shrink-0 ${menu === category
                 ? 'bg-lime-400 text-emerald-950 border-lime-400'
                 : 'border-slate-700 text-slate-400 hover:border-lime-400 hover:text-lime-400'
                 }`}
