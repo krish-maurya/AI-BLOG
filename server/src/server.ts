@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { prisma } from "./lib/prisma.js";
 import adminRouter from "./routes/adminRoutes.js";
 import blogRouter from "./routes/blogRoutes.js";
+import userRouter from "./routes/userRoutes.js";
 
 // database connection test
 
@@ -32,8 +33,11 @@ app.get("/", (req, res) => {
 
 app.use('/api/admin', adminRouter);
 app.use('/api/blog', blogRouter);
+app.use('/api/user', userRouter);
 
 const PORT = process.env.PORT || 5000;
 
-export default app;
+app.listen(PORT)
+
+// export default app;
 

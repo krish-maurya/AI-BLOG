@@ -7,6 +7,19 @@ datasource db {
   provider = "postgresql"
 }
 
+// model decleration
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String   // This will be the author name
+  role      String   @default("USER")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
+
 model Blog {
   id          String    @id @default(uuid())
   title       String

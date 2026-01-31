@@ -1,0 +1,10 @@
+import express from "express";
+import auth from "../middleware/auth.js";
+import { userCreate, userLogin } from "../controllers/userController.js";
+
+const userRouter = express.Router();
+
+userRouter.post("/login", userLogin);
+userRouter.post("/signup",userCreate);
+
+export default userRouter;

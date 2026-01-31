@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
-const auth = (req: Request, res: Response, next: Function) => {
+const auth = (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
     try {
         jwt.verify(token!, process.env.JWT_SECRET!);

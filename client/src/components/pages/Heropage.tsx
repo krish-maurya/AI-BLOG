@@ -1,8 +1,11 @@
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Blogpage from './Blogpage';
+import { useAppContext } from '../../context/appContext';
 
 export default function App() {
+
+  const {navigate , token}=useAppContext();
 
 
   // Initialize state from localStorage or default to 'home'
@@ -10,7 +13,7 @@ export default function App() {
     const savedPage = localStorage.getItem('currentPage');
     return savedPage || 'home';
   });
-  
+
   const isBlogVisible = currentPage === 'blog';
 
   // Save current page to localStorage whenever it changes
@@ -25,13 +28,12 @@ export default function App() {
 
       {/* Hero Page (slides up) */}
       <div
-        className={`fixed inset-0 z-10 transition-transform duration-1000 ease-[cubic-bezier(0.85,0,0.15,1)] ${
-          isBlogVisible ? "-translate-y-full" : "translate-y-0"
-        }`}
+        className={`fixed inset-0 z-10 transition-transform duration-1000 ease-[cubic-bezier(0.85,0,0.15,1)] ${isBlogVisible ? "-translate-y-full" : "translate-y-0"
+          }`}
       >
         {/* Green to Yellow Gradient Background */}
         <div
-          className="absolute inset-0 z-0 bg-gradient-to-b from-slate-950 via-emerald-950 to-emerald-900"
+          className="absolute inset-0 z-0 bg-linear-to-b from-slate-950 via-emerald-950 to-emerald-900"
         />
 
         {/* Content Container */}
@@ -41,6 +43,11 @@ export default function App() {
             <h1 className="text-white text-[20px] font-semibold cursor-pointer">
               Inspire.
             </h1>
+            <button
+              onClick={() => {navigate("/login")}}
+              className={`${token ? 'hidden' : 'flex'} items-center text-white px-6 py-2 rounded-full border-2 border-white bg-transparent hover:bg-lime-400 hover:text-emerald-950 hover:border-lime-400 transition-all active:scale-95`}>
+              Login
+            </button>
           </header>
 
           {/* Main Content */}

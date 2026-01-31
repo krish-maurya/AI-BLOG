@@ -11,7 +11,7 @@ interface BlogpageProps {
 }
 
 export default function Blogpage({ setCurrentPage }: BlogpageProps) {
-  const { blogs, navigate } = useAppContext();
+  const { blogs, navigate ,token } = useAppContext();
 
 
   const [menu, setMenu] = useState('All');
@@ -31,6 +31,15 @@ export default function Blogpage({ setCurrentPage }: BlogpageProps) {
   const currentCards = filterBlogs().slice(firstCardIndex, lastCardIndex);
 
   const blogCategories = ['All', 'Technology', 'Lifestyle', 'Business', 'Travel', 'Food'];
+
+  const handelCreateClick = () =>{
+    if(token){
+      navigate('/addblog')
+    }else{
+      navigate('/login')
+    }
+    
+  }
 
   const handleBackClick = () => {
     setCurrentPage?.('home');
@@ -67,7 +76,7 @@ export default function Blogpage({ setCurrentPage }: BlogpageProps) {
           </div>
 
           {/* Create */}
-          <button onClick={() => navigate('/addBlog')} className="flex items-center gap-2 px-6 py-3 rounded-xl bg-lime-400 text-emerald-950 font-semibold hover:scale-105 transition">
+          <button onClick={() => handelCreateClick ()} className="flex items-center gap-2 px-6 py-3 rounded-xl bg-lime-400 text-emerald-950 font-semibold hover:scale-105 transition">
             <Plus size={18} /> Create Blog
           </button>
         </div>

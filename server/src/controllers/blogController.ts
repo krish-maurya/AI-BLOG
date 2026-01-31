@@ -18,11 +18,13 @@ interface BuildUrlOptions {
 
 export const addBlog = async (req: Request, res: Response) => {
     try {
-        const { title, subTitle, description, category, author, ispublished } = JSON.parse(req.body.blog);
+        const { title, subTitle, description, category, ispublished } = JSON.parse(req.body.blog);
         const imageFile = (req as any).file;
 
+        const userName = req.user!.name;
+
         // all field validation
-        if (!title || !subTitle || !description || !category || !author) {
+        if (!title || !subTitle || !description || !category) {
             return res.json({ success: false, message: "All fields are required" });
         }
         if (!imageFile) {
@@ -58,7 +60,7 @@ export const addBlog = async (req: Request, res: Response) => {
                 subTitle,
                 description,
                 category,
-                author,
+                author:userName,
                 image,
                 isPublished: ispublished,
             }

@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "prebuild": "prisma generate",
     "build": "tsc",
-    "dev": "ts-node src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "start": "node dist/server.js"
   },
   "dependencies": {
@@ -13,6 +12,7 @@
     "@imagekit/nodejs": "^7.2.1",
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
@@ -21,6 +21,7 @@
     "multer": "^2.0.2"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",

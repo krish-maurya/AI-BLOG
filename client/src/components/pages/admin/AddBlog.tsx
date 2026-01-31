@@ -12,7 +12,6 @@ export default function AddBlog() {
   const editorRef = useRef(null);
   const quillRef = useRef<Quill | null>(null);
   const [image, setimage] = useState<File | boolean>(false);
-  const [author, setAuthor] = useState('')
   const [title, settitle] = useState('');
   const [subtitle, setsubtitle] = useState('');
   const [category, setcategory] = useState('Startup');
@@ -23,21 +22,7 @@ export default function AddBlog() {
     try {
       setIsLoading(true);
       
-      // Clone the default headers but remove Authorization
-      const headers = { ...axios.defaults.headers.common };
-      delete headers['Authorization'];
-
-      console.log(headers)
-      
-      const { data } = await axios.post("/api/blog/generate", 
-        { prompt: title },
-        { 
-          headers: {
-            ...headers,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      const {data} =  await axios.post("/api/blog/generate",{prompt : title})
       
       if (data.success) {
         if (data.content && quillRef.current) {
@@ -68,7 +53,6 @@ export default function AddBlog() {
         subTitle: subtitle,
         description: quillRef.current.root.innerHTML,
         category,
-        author,
         ispublished: isPublished,
       }
 
@@ -83,7 +67,6 @@ export default function AddBlog() {
         toast.success(data.message);
         setimage(false)
         settitle('')
-        setAuthor('')
         setsubtitle('')
         quillRef.current.root.innerHTML = ''
         setcategory('StartUp')
@@ -129,20 +112,6 @@ export default function AddBlog() {
             </button>
           </div>
           <div className="space-y-6">
-            {/* Blog Title */}
-            <div>
-              <label className="block text-slate-300 text-sm font-medium mb-2">
-                Author <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Enter author name..."
-                className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all"
-                required
-                onChange={(e) => setAuthor(e.target.value)}
-                value={author}
-              />
-            </div>
 
             {/* Blog Title */}
             <div>
