@@ -3,7 +3,8 @@ AI-BLOG
 AI-BLOG is a full-stack AI-powered blogging platform built using React, Node.js, TypeScript, PostgreSQL (Supabase), and Groq AI.
 It supports role-based access control, custom JWT authentication, and a fully responsive UI, deployed on Vercel.
 
-🚀 Features
+ Features
+
 🧠 AI-Powered Blog Generation
 
 AI content generation using Groq SDK
