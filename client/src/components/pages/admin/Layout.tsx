@@ -15,6 +15,7 @@ export default function Layout() {
     localStorage.removeItem('token')
     axios.defaults.headers.common['Authorization'] = null;
     setToken(null)
+    localStorage.removeItem('currentPage')
     navigate('/')
   }
 
