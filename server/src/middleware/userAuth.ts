@@ -23,6 +23,7 @@ const userAuth = (req: Request, res: Response, next: NextFunction) => {
     };
 
     // Check if role is USER
+    console.log(decoded)
     if (decoded.role !== 'USER') {
         return res.status(403).json({ 
             success: false, 
